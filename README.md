@@ -21,9 +21,14 @@ Fork your current Claude session and open the fork in a new tmux side pane — a
 
 **Requirements:** Claude Code CLI, tmux
 
-**Usage:** Inside any Claude session, run:
+**Usage:** Inside a Claude session running inside tmux, run:
 ```
 /fork-pane
+```
+
+Optionally pass a specific session ID to fork:
+```
+/fork-pane <session-id>
 ```
 
 A new pane opens on the right with an independent fork of your conversation. Both branches diverge from that point.
