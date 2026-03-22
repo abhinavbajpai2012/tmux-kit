@@ -7,9 +7,11 @@ allowed-tools:
 
 Fork this Claude session and open the fork in a new tmux side pane.
 
-**Step 1: Get the current session ID**
+**Step 1: Get the session ID**
 
-Use the Bash tool to find the current session ID (most recently modified entry in session-env):
+If `$ARGUMENTS` is provided and looks like a UUID, use it as the session ID.
+
+Otherwise, use the Bash tool to find the current session ID (most recently modified entry in session-env):
 
 ```bash
 ls -t ~/.claude/session-env/ | head -1
