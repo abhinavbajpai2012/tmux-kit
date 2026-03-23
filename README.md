@@ -4,7 +4,8 @@ A Claude Code plugin for managing multiple Claude sessions across tmux panes —
 
 **Requirements:** Claude Code CLI, [tmux](https://github.com/tmux/tmux)
 
-> **Note:** All commands must be run from inside a tmux session. If you're not in one, start with `tmux` or `tmux new -s my-session` before using any tmux-kit commands.
+> ${\color{red}\textbf{⚠ tmux\ is\ required.\ Claude\ must\ be\ running\ inside\ a\ tmux\ session.}}$
+> If you're not in one, start with `tmux` or `tmux new -s my-session` first.
 
 ## Installation
 
