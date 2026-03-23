@@ -24,21 +24,31 @@ ls -t ~/.claude/session-env/ | head -1
 
 Generate `<count>` unique random human-readable names, each in the style of `<adjective>-<noun>` (e.g. `swift-canyon`, `amber-tide`, `hollow-pine`). All names must be distinct. Pick words at random — do not use a fixed list.
 
-**Step 3: Create each fork**
+**Step 3: Capture the current tmux session name**
+
+Use the Bash tool to get the session name:
+
+```bash
+tmux display-message -p '#{session_name}'
+```
+
+Store the result as `<tmux-session>`. This is required so all window creation is explicitly scoped to the correct session.
+
+**Step 4: Create each fork**
 
 For each fork (repeat `<count>` times), use the Bash tool to run:
 
 ```bash
-tmux new-window -d -n "<name>" && tmux split-window -d -h -t "<name>" "claude -r <session-id> --fork-session -n '<name>'"
+tmux new-window -d -n "<name>" -t "<tmux-session>:" && tmux split-window -d -h -t "<tmux-session>:<name>" "claude -r <session-id> --fork-session -n '<name>'"
 ```
 
-The `-d` flags are critical: they create the window and pane in the background without switching focus away from the current window. This ensures each iteration starts from the same focused window, not wherever the previous one left off.
+The `-d` flags create the window and pane in the background without switching focus. Explicitly targeting `-t "<tmux-session>:"` ensures the window lands in the correct session regardless of tmux server state.
 
 The `--fork-session` flag resumes the session AND creates a new independent branch of it. Every fork starts from the same conversation state and diverges independently.
 
 Run each fork as a separate Bash call so failures are isolated.
 
-**Step 4: Confirm**
+**Step 5: Confirm**
 
 Tell the user:
 - How many forks were created
