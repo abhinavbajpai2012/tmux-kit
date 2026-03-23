@@ -2,7 +2,9 @@
 
 A Claude Code plugin for managing multiple Claude sessions across tmux panes — fork sessions, spawn fresh ones, and merge their context back together.
 
-**Requirements:** Claude Code CLI, tmux
+**Requirements:** Claude Code CLI, [tmux](https://github.com/tmux/tmux)
+
+> **Note:** All commands must be run from inside a tmux session. If you're not in one, start with `tmux` or `tmux new -s my-session` before using any tmux-kit commands.
 
 ## Installation
 
