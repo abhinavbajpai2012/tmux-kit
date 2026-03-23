@@ -15,32 +15,36 @@ Merge the conversation context from a named Claude session into the current sess
 
 **Step 2: Find the session ID**
 
-First, try to find the session while it is still running by looking up its PID via tmux:
+First, try to find the session while it is still running by matching the pane title across all panes:
 
 ```bash
-tmux list-panes -t "<name>" -F "#{pane_pid}" 2>/dev/null
+tmux list-panes -a -F "#{pane_title} #{pane_pid}" 2>/dev/null | grep "^<name> " | awk '{print $2}'
 ```
 
-If a PID is found, find its child processes (the actual claude process):
+If a pane PID is found, look it up directly in `~/.claude/sessions/<pane_pid>.json` — when Claude is launched with `claude -n <name>`, the pane process *is* the Claude process, so the pane PID is the session PID:
 
 ```bash
-pgrep -P <pane_pid>
-```
-
-Then find the matching session file in `~/.claude/sessions/`:
-
-```bash
-for f in ~/.claude/sessions/*.json; do
-  python3 -c "
-import json, sys
-d = json.load(open('$f'))
-if d.get('pid') == <pid>:
+python3 -c "
+import json, sys, os
+pid = <pane_pid>
+f = os.path.expanduser(f'~/.claude/sessions/{pid}.json')
+if os.path.exists(f):
+    d = json.load(open(f))
     print(d['sessionId'])
-" 2>/dev/null
-done
+else:
+    # Fallback: check child processes
+    import subprocess
+    children = subprocess.run(['pgrep', '-P', str(pid)], capture_output=True, text=True).stdout.split()
+    for child in children:
+        cf = os.path.expanduser(f'~/.claude/sessions/{child}.json')
+        if os.path.exists(cf):
+            d = json.load(open(cf))
+            print(d['sessionId'])
+            sys.exit(0)
+"
 ```
 
-If the session is no longer running (no tmux window or no matching PID), fall back to searching by slug across all project JSONL files:
+If the session is no longer running (no matching pane title or no session file), fall back to searching by slug across all project JSONL files:
 
 ```bash
 python3 -c "
@@ -92,8 +96,8 @@ if not target:
                 pass
 
 if not target:
-    print('Session file not found')
-    exit(1)
+    print('NO_HISTORY')
+    exit(0)
 
 turns = []
 with open(target) as fh:
@@ -126,7 +130,9 @@ for role, text in turns:
 
 **Step 4: Synthesize and inject context**
 
-Read the extracted conversation turns and synthesize a concise context summary covering:
+If the script output is `NO_HISTORY`, stop and tell the user that `<name>` is a fresh session with no conversation history yet — nothing to merge.
+
+Otherwise, read the extracted conversation turns and synthesize a concise context summary covering:
 - The main goal or problem being worked on in that session
 - Key decisions made
 - Work completed (files changed, features built, bugs fixed)

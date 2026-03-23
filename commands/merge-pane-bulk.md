@@ -18,32 +18,34 @@ Merge the conversation context from multiple named Claude sessions into the curr
 
 Repeat the following for every name in the list.
 
-First, try to find the session while it is still running by looking up its PID via tmux:
+First, try to find the session while it is still running by matching the pane title across all panes:
 
 ```bash
-tmux list-panes -t "<name>" -F "#{pane_pid}" 2>/dev/null
+tmux list-panes -a -F "#{pane_title} #{pane_pid}" 2>/dev/null | grep "^<name> " | awk '{print $2}'
 ```
 
-If a PID is found, find its child processes (the actual claude process):
+If a pane PID is found, look it up directly in `~/.claude/sessions/<pane_pid>.json` — when Claude is launched with `claude -n <name>`, the pane process *is* the Claude process:
 
 ```bash
-pgrep -P <pane_pid>
-```
-
-Then find the matching session file in `~/.claude/sessions/`:
-
-```bash
-for f in ~/.claude/sessions/*.json; do
-  python3 -c "
-import json
-d = json.load(open('$f'))
-if d.get('pid') == <pid>:
+python3 -c "
+import json, sys, os, subprocess
+pid = <pane_pid>
+f = os.path.expanduser(f'~/.claude/sessions/{pid}.json')
+if os.path.exists(f):
+    d = json.load(open(f))
     print(d['sessionId'])
-" 2>/dev/null
-done
+else:
+    children = subprocess.run(['pgrep', '-P', str(pid)], capture_output=True, text=True).stdout.split()
+    for child in children:
+        cf = os.path.expanduser(f'~/.claude/sessions/{child}.json')
+        if os.path.exists(cf):
+            d = json.load(open(cf))
+            print(d['sessionId'])
+            sys.exit(0)
+"
 ```
 
-If the session is no longer running (no tmux window or no matching PID), fall back to searching by slug across all project JSONL files:
+If the session is no longer running (no matching pane title or no session file), fall back to searching by slug across all project JSONL files:
 
 ```bash
 python3 -c "
@@ -95,8 +97,8 @@ if not target:
                 pass
 
 if not target:
-    print('Session file not found')
-    exit(1)
+    print('NO_HISTORY')
+    exit(0)
 
 turns = []
 with open(target) as fh:
@@ -127,7 +129,7 @@ for role, text in turns:
 "
 ```
 
-Run lookups sequentially, one session at a time.
+Run lookups sequentially, one session at a time. If a session outputs `NO_HISTORY`, mark it as "empty session — no conversation yet" and skip synthesis for it.
 
 **Step 4: Synthesize and inject all contexts**
 
