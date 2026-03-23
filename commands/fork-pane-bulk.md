@@ -26,33 +26,19 @@ Generate `<count>` unique random human-readable names, each in the style of `<ad
 
 **Step 3: Create each fork**
 
-For each fork (repeat `<count>` times), use the Bash tool to:
-
-1. Create a new tmux window named after the generated name:
+For each fork (repeat `<count>` times), use the Bash tool to run:
 
 ```bash
-tmux new-window -n "<name>"
+tmux new-window -d -n "<name>" && tmux split-window -d -h -t "<name>" "claude -r <session-id> --fork-session -n '<name>'"
 ```
 
-2. Split that window horizontally and launch the forked Claude session in the right pane:
-
-```bash
-tmux split-window -h -t "<name>" "claude -r <session-id> --fork-session -n '<name>'"
-```
+The `-d` flags are critical: they create the window and pane in the background without switching focus away from the current window. This ensures each iteration starts from the same focused window, not wherever the previous one left off.
 
 The `--fork-session` flag resumes the session AND creates a new independent branch of it. Every fork starts from the same conversation state and diverges independently.
 
-Run each fork sequentially (one Bash call per fork) so tmux window creation is reliable.
+Run each fork as a separate Bash call so failures are isolated.
 
-**Step 4: Return focus to the original window**
-
-After all forks are created, switch back to the window where the command was invoked:
-
-```bash
-tmux select-window -t !
-```
-
-**Step 5: Confirm**
+**Step 4: Confirm**
 
 Tell the user:
 - How many forks were created

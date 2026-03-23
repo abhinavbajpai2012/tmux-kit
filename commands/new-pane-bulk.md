@@ -17,33 +17,17 @@ Open N brand-new Claude sessions, each in its own tmux window with a unique auto
 
 **Step 2: Create each new session**
 
-For each session (repeat `<count>` times), use the Bash tool to:
-
-1. Create a new tmux window named after the generated name:
+For each session (repeat `<count>` times), use the Bash tool to run:
 
 ```bash
-tmux new-window -n "<name>"
+tmux new-window -d -n "<name>" && tmux split-window -d -h -t "<name>" "claude -n '<name>'"
 ```
 
-2. Split that window and launch a fresh Claude session in the right pane:
+The `-d` flags are critical: they create the window and pane in the background without switching focus away from the current window. This ensures each iteration starts from the same focused window, not wherever the previous one left off.
 
-```bash
-tmux split-window -h -t "<name>" "claude -n '<name>'"
-```
+Run each session as a separate Bash call so failures are isolated.
 
-This opens a completely fresh Claude session in each pane (no shared history).
-
-Run each creation sequentially (one Bash call per session) so tmux window creation is reliable.
-
-**Step 3: Return focus to the original window**
-
-After all sessions are created, switch back to the window where the command was invoked:
-
-```bash
-tmux select-window -t !
-```
-
-**Step 4: Confirm**
+**Step 3: Confirm**
 
 Tell the user:
 - How many new sessions were created
