@@ -1,11 +1,11 @@
 ---
 name: fork-pane-bulk
-description: Fork the current Claude session N times, opening each fork in its own tmux window with a randomly generated name
+description: Fork the current Claude session N times, opening each fork in its own tmux side pane with a randomly generated name
 allowed-tools:
   - Bash
 ---
 
-Fork this Claude session N times, each in a new tmux window with a unique auto-generated name.
+Fork this Claude session N times, each in a new tmux side pane within the current window.
 
 **Step 1: Parse arguments**
 
@@ -32,18 +32,19 @@ For 3 forks named `swift-canyon`, `amber-tide`, `hollow-pine` with session ID `<
 
 ```bash
 SESS=$(tmux display-message -p '#{session_name}') && \
+WIND=$(tmux display-message -p '#{window_index}') && \
 for NAME in "swift-canyon" "amber-tide" "hollow-pine"; do \
-  tmux new-window -d -n "$NAME" -t "${SESS}:" && \
-  tmux split-window -d -h -t "${SESS}:${NAME}" "claude -r <session-id> --fork-session -n '${NAME}'"; \
-done
+  tmux split-window -h -t "${SESS}:${WIND}" "claude -r <session-id> --fork-session -n '${NAME}'"; \
+done && \
+tmux select-layout -t "${SESS}:${WIND}" tiled
 ```
 
-Substitute the real names and real session ID before running. The `--fork-session` flag resumes the session AND creates a new independent branch. Every fork starts from the same conversation state and diverges independently.
+Substitute the real names and real session ID before running. Each pane runs Claude directly. The `--fork-session` flag resumes the session AND creates a new independent branch. Every fork starts from the same conversation state and diverges independently. The `select-layout tiled` at the end distributes all panes evenly.
 
 **Step 4: Confirm**
 
 Tell the user:
 - How many forks were created
-- The list of window names (one per line)
+- The list of pane names (one per line)
 - Each fork is an independent branch starting from the same conversation state
-- How to navigate: `Ctrl+b w` to see all windows, `Ctrl+b '` to jump by name, or `tmux select-window -t <name>`
+- How to navigate between panes: `Ctrl+b o` to cycle, `Ctrl+b q` then a number to jump, or `Ctrl+b ;` to toggle last pane

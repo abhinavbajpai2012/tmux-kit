@@ -1,18 +1,18 @@
 ---
 name: new-pane-bulk
-description: Open N fresh Claude sessions, each in its own tmux window with an auto-generated name
+description: Open N fresh Claude sessions, each in its own tmux side pane with an auto-generated name
 allowed-tools:
   - Bash
 ---
 
-Open N brand-new Claude sessions, each in its own tmux window with a unique auto-generated name.
+Open N brand-new Claude sessions, each in its own tmux side pane within the current window.
 
 **Step 1: Parse arguments**
 
 `$ARGUMENTS` has the form: `<count> [<name1> <name2> ...]`
 
 - The first token is the **count** (required) — how many new sessions to create
-- Any remaining tokens are treated as explicit **window names**, assigned in order
+- Any remaining tokens are treated as explicit **pane names**, assigned in order
 - If fewer names are provided than `<count>`, generate random human-readable names for the remainder in the style of `<adjective>-<noun>` (e.g. `silver-drift`, `pale-torch`, `keen-vale`). All names must be distinct. Pick words at random — do not use a fixed list.
 
 **Step 2: Create all sessions in one Bash call**
@@ -23,18 +23,19 @@ For 3 sessions named `silver-drift`, `pale-torch`, `keen-vale`, the command look
 
 ```bash
 SESS=$(tmux display-message -p '#{session_name}') && \
+WIND=$(tmux display-message -p '#{window_index}') && \
 for NAME in "silver-drift" "pale-torch" "keen-vale"; do \
-  tmux new-window -d -n "$NAME" -t "${SESS}:" && \
-  tmux split-window -d -h -t "${SESS}:${NAME}" "claude -n '${NAME}'"; \
-done
+  tmux split-window -h -t "${SESS}:${WIND}" "claude -n '${NAME}'"; \
+done && \
+tmux select-layout -t "${SESS}:${WIND}" tiled
 ```
 
-Substitute the real names before running.
+Substitute the real names before running. Each pane runs Claude directly. The `select-layout tiled` at the end distributes all panes evenly.
 
 **Step 3: Confirm**
 
 Tell the user:
 - How many sessions were created
-- The list of window names (one per line)
+- The list of pane names (one per line)
 - Each is a fresh, independent Claude session
-- How to navigate: `Ctrl+b w` to see all windows, `Ctrl+b '` to jump by name, or `tmux select-window -t <name>`
+- How to navigate between panes: `Ctrl+b o` to cycle, `Ctrl+b q` then a number to jump, or `Ctrl+b ;` to toggle last pane
