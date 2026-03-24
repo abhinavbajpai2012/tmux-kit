@@ -46,5 +46,3 @@ Substitute the real names and real session ID before running. Each pane runs Cla
 Tell the user:
 - How many forks were created
 - The list of pane names (one per line)
-- Each fork is an independent branch starting from the same conversation state
-- How to navigate between panes: `Ctrl+b o` to cycle, `Ctrl+b q` then a number to jump, or `Ctrl+b ;` to toggle last pane

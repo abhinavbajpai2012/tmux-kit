@@ -37,7 +37,4 @@ tmux rename-window "<name>"
 **Step 4: Confirm**
 
 Tell the user:
-- A new Claude session is open in the right pane
-- The window is named `<name>` — navigate to it with `tmux select-window -t <name>` or `Ctrl+b '`
-- The current pane is unchanged
-- How to switch panes: `Ctrl+b o` to cycle, `Ctrl+b ;` to toggle last pane
+- A new Claude session named `<name>` is open in the side pane

@@ -37,5 +37,3 @@ Substitute the real names before running. Each pane runs Claude directly. The `s
 Tell the user:
 - How many sessions were created
 - The list of pane names (one per line)
-- Each is a fresh, independent Claude session
-- How to navigate between panes: `Ctrl+b o` to cycle, `Ctrl+b q` then a number to jump, or `Ctrl+b ;` to toggle last pane

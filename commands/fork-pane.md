@@ -46,8 +46,5 @@ This lets you navigate back to the fork later with `tmux select-window -t <name>
 **Step 4: Confirm**
 
 Tell the user:
-- The fork is now open in the right pane (new independent branch)
-- The current pane is the original, unchanged
-- Both start from the same conversation state
-- How to switch panes: `Ctrl+b o` to cycle, `Ctrl+b ;` to toggle last pane
-- If a name was given: the window is named `<name>` — switch to it anytime with `Ctrl+b '` and type the name, or `tmux select-window -t <name>`
+- The fork named `<name>` is now open in the side pane
+- Both panes start from the same conversation state and diverge independently
