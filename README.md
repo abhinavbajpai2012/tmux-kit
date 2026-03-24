@@ -13,6 +13,14 @@ tmux                  # or: tmux new -s my-session
 claude
 ```
 
+Then use any tmux-kit command inside Claude:
+
+```
+/fork-pane                        # fork current session into a new pane
+/new-pane                         # open a fresh Claude session in a new pane
+/merge-pane bright-canyon         # merge context from another session back in
+```
+
 ## Installation
 
 ### As a plugin (recommended)
