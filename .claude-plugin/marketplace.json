@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "tmux-kit",
-      "source": "./commands",
+      "source": "./",
       "description": "Manage multiple Claude sessions across tmux panes — fork, spawn, and merge context."
     }
   ]

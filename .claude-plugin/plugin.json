@@ -1,7 +1,5 @@
 {
   "name": "tmux-kit",
-  "description": "tmux + Claude Code commands for forking, spawning, and merging sessions across panes",
-  "version": "1.0.0",
-  "keywords": ["tmux", "sessions", "fork", "pane", "workflow", "multi-agent"],
-  "license": "MIT"
+  "description": "Manage multiple Claude sessions across tmux panes — fork, spawn, and merge context.",
+  "version": "1.0.0"
 }
