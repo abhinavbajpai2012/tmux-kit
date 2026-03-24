@@ -22,10 +22,11 @@ Use the Bash tool to run ONE single command with all the names substituted in â€
 For 3 sessions named `silver-drift`, `pale-torch`, `keen-vale`, the command looks like:
 
 ```bash
+CLAUDE=$(which claude) && \
 SESS=$(tmux display-message -p '#{session_name}') && \
 WIND=$(tmux display-message -p '#{window_index}') && \
 for NAME in "silver-drift" "pale-torch" "keen-vale"; do \
-  tmux split-window -d -h -t "${SESS}:${WIND}" "claude -n '${NAME}'"; \
+  tmux split-window -d -h -t "${SESS}:${WIND}" "$CLAUDE -n '${NAME}'"; \
 done && \
 tmux select-layout -t "${SESS}:${WIND}" tiled
 ```
