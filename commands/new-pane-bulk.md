@@ -25,7 +25,7 @@ For 3 sessions named `silver-drift`, `pale-torch`, `keen-vale`, the command look
 SESS=$(tmux display-message -p '#{session_name}') && \
 WIND=$(tmux display-message -p '#{window_index}') && \
 for NAME in "silver-drift" "pale-torch" "keen-vale"; do \
-  tmux split-window -h -t "${SESS}:${WIND}" "claude -n '${NAME}'"; \
+  tmux split-window -d -h -t "${SESS}:${WIND}" "claude -n '${NAME}'"; \
 done && \
 tmux select-layout -t "${SESS}:${WIND}" tiled
 ```

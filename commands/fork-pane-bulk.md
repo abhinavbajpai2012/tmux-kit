@@ -34,7 +34,7 @@ For 3 forks named `swift-canyon`, `amber-tide`, `hollow-pine` with session ID `<
 SESS=$(tmux display-message -p '#{session_name}') && \
 WIND=$(tmux display-message -p '#{window_index}') && \
 for NAME in "swift-canyon" "amber-tide" "hollow-pine"; do \
-  tmux split-window -h -t "${SESS}:${WIND}" "claude -r <session-id> --fork-session -n '${NAME}'"; \
+  tmux split-window -d -h -t "${SESS}:${WIND}" "claude -r <session-id> --fork-session -n '${NAME}'"; \
 done && \
 tmux select-layout -t "${SESS}:${WIND}" tiled
 ```
