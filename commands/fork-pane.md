@@ -28,7 +28,7 @@ If no window name is found in `$ARGUMENTS`, generate a random human-readable nam
 Use the Bash tool to run:
 
 ```bash
-CLAUDE=$(which claude) && tmux split-window -d -h -t "$(tmux display-message -p '#{pane_id}')" "$CLAUDE -r <session-id> --fork-session -n '<name>'"
+CLAUDE=$(which claude) && tmux split-window -d -h -t "$(tmux display-message -p '#{pane_id}')" "$CLAUDE -r <session-id> --fork-session -n '<name>'" && tmux set-option -g mouse on
 ```
 
 The `--fork-session` flag resumes the current session AND creates a new independent branch of it. This means both panes start from the same conversation state and can diverge independently.

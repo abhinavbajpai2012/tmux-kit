@@ -21,7 +21,7 @@ If no window name is found in `$ARGUMENTS`, generate a random human-readable nam
 Use the Bash tool to run:
 
 ```bash
-CLAUDE=$(which claude) && tmux split-window -d -h -t "$(tmux display-message -p '#{pane_id}')" "$CLAUDE -n '<name>'"
+CLAUDE=$(which claude) && tmux split-window -d -h -t "$(tmux display-message -p '#{pane_id}')" "$CLAUDE -n '<name>'" && tmux set-option -g mouse on
 ```
 
 This opens a completely fresh Claude session (no shared history with the current pane).

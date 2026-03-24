@@ -37,7 +37,8 @@ WIND=$(tmux display-message -p '#{window_index}') && \
 for NAME in "swift-canyon" "amber-tide" "hollow-pine"; do \
   tmux split-window -d -h -t "${SESS}:${WIND}" "$CLAUDE -r <session-id> --fork-session -n '${NAME}'"; \
 done && \
-tmux select-layout -t "${SESS}:${WIND}" tiled
+tmux select-layout -t "${SESS}:${WIND}" tiled && \
+tmux set-option -g mouse on
 ```
 
 Substitute the real names and real session ID before running. Each pane runs Claude directly. The `--fork-session` flag resumes the session AND creates a new independent branch. Every fork starts from the same conversation state and diverges independently. The `select-layout tiled` at the end distributes all panes evenly.

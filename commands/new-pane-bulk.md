@@ -28,7 +28,8 @@ WIND=$(tmux display-message -p '#{window_index}') && \
 for NAME in "silver-drift" "pale-torch" "keen-vale"; do \
   tmux split-window -d -h -t "${SESS}:${WIND}" "$CLAUDE -n '${NAME}'"; \
 done && \
-tmux select-layout -t "${SESS}:${WIND}" tiled
+tmux select-layout -t "${SESS}:${WIND}" tiled && \
+tmux set-option -g mouse on
 ```
 
 Substitute the real names before running. Each pane runs Claude directly. The `select-layout tiled` at the end distributes all panes evenly.
