@@ -1,0 +1,13 @@
+{
+  "name": "tmux-kit",
+  "owner": {
+    "name": "abhinavbajpai2012"
+  },
+  "plugins": [
+    {
+      "name": "tmux-kit",
+      "source": ".",
+      "description": "Manage multiple Claude sessions across tmux panes — fork, spawn, and merge context."
+    }
+  ]
+}
